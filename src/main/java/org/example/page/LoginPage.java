@@ -1,6 +1,5 @@
 package org.example.page;
 
-import lombok.AllArgsConstructor;
 import org.example.DTO.User;
 import org.example.InputUtil;
 import org.example.Service.LoginService;
@@ -10,7 +9,7 @@ import org.example.SessionManager;
 public class LoginPage implements Page{
     public LoginPage(LoginService loginService){
         this.loginService = loginService;
-        sessionManager = SessionManager.();
+        sessionManager = SessionManager.getInstance();
     }
     private LoginService loginService;
     private SessionManager sessionManager;
@@ -23,9 +22,11 @@ public class LoginPage implements Page{
             switch (input) {
                 case 1 -> login();
                 case 2 -> logout();
-                case 3 -> signin();
-                case 4 -> setLicense()
-                case 0 -> System.exit(0);
+                case 3 -> signIn();
+                case 4 -> setLicense();
+                case 0 -> {
+                    return;
+                }
             }
         }
     }
@@ -48,12 +49,29 @@ public class LoginPage implements Page{
         }
     }
     private void signIn(){
-        String userId = InputUtil.getLine("아이디를 입력하시오");
+        String userId;
+        while(true){
+            userId = InputUtil.getLine("아이디를 입력하시오");
+            if(!loginService.isDuplicated(userId)){
+                break;
+            }
+            System.out.println("중복된 아이디");
+        }
+
         String password = InputUtil.getLine("비밀번호를 입력하시오");
         if(loginService.signIn(userId,password)){
             System.out.println("회원가입 되었다");
         }else{
-
+            System.out.println("회원 가입 실패");
         }
+    }
+    private void setLicense(){
+        if(sessionManager.getUser()==null){
+            System.out.println("로그인 되어있어야 가능하다");
+            return;
+        }
+        String license = InputUtil.getLine("면허 번호를 등록하시오");
+        sessionManager.getUser().setLicenceId(license);
+        loginService.updateUser();
     }
 }

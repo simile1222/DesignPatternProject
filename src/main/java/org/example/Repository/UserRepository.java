@@ -2,9 +2,6 @@ package org.example.Repository;
 
 import org.example.DTO.User;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class UserRepository {
 
     private static UserRepository instance;
@@ -15,7 +12,7 @@ public class UserRepository {
         }
         return instance;
     }
-    public Boolean isThereSameName(){
+    public Boolean isThereSameName(String userId){
         return null;
     }
     public User findUser(String userId,String password){
