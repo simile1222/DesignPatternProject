@@ -8,14 +8,14 @@ import java.util.List;
 
 public class CarService {
     CarRepository carRepository = CarRepository.getInstance();
-    List<Car> showCarList(SearchCondition condition){
+    public List<Car> showCarList(SearchCondition condition){
         return carRepository.getCarList(condition);
     }
     public Boolean lentCar(String carId){
-
+        return null;
     }
     public Boolean returnCar(Car car){
-
+        return null;
     }
 
 }

@@ -3,20 +3,16 @@ package org.example;
 import org.example.Repository.UserRepository;
 import org.example.Service.CarService;
 import org.example.Service.LoginService;
+import org.example.page.LoginPage;
+import org.example.page.Page;
 
 import java.util.Scanner;
 
 public class Demo {
-    private static Scanner sc = new Scanner(System.in);
-    private static CarService carService;
-    private static LoginService loginService;
-
+    static Page page = null;
     public static void main(String[] args) {
-        loginService = new LoginService();
         while(true){
-            System.out.println("[1] 로그인 [2] 차량 목록 [3] 차량 대여 [4] 반납 [0] 종료");
-            int input = sc.nextInt();
-            sc.nextLine();
+            int input = InputUtil.getInt(InputUtil.makeQuestion("로그인","차량 목록","차량 대여","반납"));
             switch (input) {
                 case 1 -> handleLogin();
                 case 2 -> showCars();
@@ -24,10 +20,13 @@ public class Demo {
                 case 4 -> handleReturn();
                 case 0 -> System.exit(0);
             }
-
+            page.showPage();
         }
     }
-    public static void handleLogin(){}
+    public static void handleLogin(){
+        page = new LoginPage(new LoginService());
+    }
     public static void showCars(){}
-    public static void handle
+    public static void handleRent(){}
+    public static void handleReturn(){}
 }
