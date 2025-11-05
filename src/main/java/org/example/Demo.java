@@ -27,7 +27,10 @@ public class Demo {
 
         }
     }
-    public static void handleLogin(){}
+    public static void handleLogin(){
+        System.out.println("1");
+    }
     public static void showCars(){}
-    public static void handle
+    public static void handleRent(){}
+    public static void handleReturn(){}
 }

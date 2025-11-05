@@ -9,6 +9,6 @@ public class LoginService {
         return userRepository.findUser(userId,password);
     }
     public Boolean signIn(String userId,String password){
-
+        return null;
     }
 }
