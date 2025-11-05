@@ -18,7 +18,6 @@ public class LoginPage implements Page{
 
         while(true){
             int input =InputUtil.getInt("로그인","로그아웃","회원가입","면허등록");
-
             switch (input) {
                 case 1 -> login();
                 case 2 -> logout();
