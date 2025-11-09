@@ -1,7 +1,7 @@
 package org.example.DTO;
 
 public class Car {
-    private String carId;
+    private String carID;
     private String modelName;
     private String carPlateNumber;
     private Integer price;
