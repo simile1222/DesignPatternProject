@@ -23,7 +23,7 @@ public class Car {
     public void setAvailable(boolean available) {
         this.isAvailable = available;
     }
-    public setMileage(double mileage) {
+    public void setMileage(double mileage) {
         this.currentMileage = mileage;
     }
     
