@@ -23,11 +23,11 @@ public class Car {
     public void setAvailable(boolean available) {
         this.isAvailable = available;
     }
-    public void setMileage(double mileage) {
+    public void setCurrentMileage(double mileage) {
         this.currentMileage = mileage;
     }
-    
-    public boolean isAvailble() {return isAvailable;}
+
+    public boolean isAvailable() {return isAvailable;}
     public String getCarID() {return carID;}
     public String getModelName() {return modelName;}
     public String getCarPlateNumber() {return carPlateNumber;}
