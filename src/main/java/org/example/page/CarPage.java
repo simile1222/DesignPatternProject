@@ -18,7 +18,7 @@ public class CarPage implements Page{
     public CarPage(CarService carService,PayService payService){
         this.carService=carService;
         this.payService=payService;
-        sessionManager = SessionManager.getInstance();
+        sessionManager = SessionManager.INSTANCE;
     }
     @Override
     public void showPage() {
@@ -54,8 +54,7 @@ public class CarPage implements Page{
             return;
         }
         String carId = InputUtil.getLine("차량 번호를 입력하시오");
-        sessionManager.setCar();
-
+        sessionManager.setCar(new Car());
     }
     private void returnCar(){
         User user = sessionManager.getUser();

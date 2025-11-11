@@ -9,7 +9,7 @@ import org.example.SessionManager;
 public class LoginPage implements Page{
     public LoginPage(LoginService loginService){
         this.loginService = loginService;
-        sessionManager = SessionManager.getInstance();
+        sessionManager = SessionManager.INSTANCE;
     }
     private LoginService loginService;
     private SessionManager sessionManager;

@@ -16,7 +16,8 @@ public class LoginService {
         return null;
     }
     public void updateUser(){
-        SessionManager sessionManager=SessionManager.getInstance();
+        SessionManager sessionManager=SessionManager.INSTANCE;
+
         if(sessionManager.getUser()==null){
             return;
         }
