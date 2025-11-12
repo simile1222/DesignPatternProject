@@ -58,19 +58,19 @@ public class LoginPage implements Page{
         }
 
         String password = InputUtil.getLine("비밀번호를 입력하시오");
+
         if(loginService.signIn(userId,password)){
             System.out.println("회원가입 되었다");
         }else{
             System.out.println("회원 가입 실패");
         }
     }
-    private void setLicense(){
+    private boolean setLicense(){
         if(sessionManager.getUser()==null){
             System.out.println("로그인 되어있어야 가능하다");
-            return;
+            return false;
         }
         String license = InputUtil.getLine("면허 번호를 등록하시오");
-        sessionManager.getUser().setLicenceId(license);
-        loginService.updateUser();
+        return loginService.updateLicense(sessionManager.getUser().getId(),license==null);
     }
 }

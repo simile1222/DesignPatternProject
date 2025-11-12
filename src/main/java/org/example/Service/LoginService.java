@@ -1,26 +1,29 @@
 package org.example.Service;
 
 import org.example.DTO.User;
-import org.example.Repository.UserRepository;
-import org.example.SessionManager;
+import org.example.Sha256Util;
+import org.example.db.UserDAO;
 
 public class LoginService {
-    UserRepository userRepository = new UserRepository();
+    UserDAO userDAO = new UserDAO();
     public Boolean isDuplicated(String userId){
-        return userRepository.isThereSameName(userId);
+        if(userDAO.getUserById(userId)==null){
+            return false;
+        }else{
+            return true;
+        }
     }
     public User login(String userId,String password){
-        return userRepository.findUser(userId,password);
+        return userDAO.logIn();
     }
     public Boolean signIn(String userId,String password){
-        return null;
-    }
-    public void updateUser(){
-        SessionManager sessionManager=SessionManager.INSTANCE;
 
-        if(sessionManager.getUser()==null){
-            return;
-        }
-        userRepository.upsertUser(sessionManager.getUser());
+        return userDAO.insertUser(User.builder()
+                .id(userId)
+                .passwordHash(Sha256Util.hash(password))
+                .build());
+    }
+    public Boolean updateLicense(String id,boolean license){
+        return userDAO.updateLicense(id,license);
     }
 }

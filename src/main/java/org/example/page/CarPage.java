@@ -45,7 +45,8 @@ public class CarPage implements Page{
         if(user ==null){
             System.out.println("로그인이 필요한 서비스");
             return;
-        } else if (user.getLicenceId().isEmpty()) {
+        }
+        if (user.isLicenseVerified()) {
             System.out.println("면허가 필요한 서비스");
             return;
         }
@@ -54,7 +55,12 @@ public class CarPage implements Page{
             return;
         }
         String carId = InputUtil.getLine("차량 번호를 입력하시오");
-        sessionManager.setCar(new Car());
+        if(!carService.lentCar(carId)){
+            System.out.println("대여 오류 발생");
+            return;
+        }
+        sessionManager.setCar(carService.getCar(carId));
+
     }
     private void returnCar(){
         User user = sessionManager.getUser();
@@ -67,8 +73,10 @@ public class CarPage implements Page{
             System.out.println("대여중인 차량이 없다");
             return;
         }
-        payService.pay();
-        sessionManager.setCar(null);
 
+        payService.pay();
+
+        carService.returnCar(car);
+        sessionManager.setCar(null);
     }
 }
