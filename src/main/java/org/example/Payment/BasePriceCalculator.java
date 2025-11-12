@@ -6,7 +6,6 @@ public class BasePriceCalculator implements PriceCalculator {
     public BasePriceCalculator(int basePrice) {
         this.basePrice = basePrice;
     }
-
     public int calculatePrice() {
         return this.basePrice;
     }
