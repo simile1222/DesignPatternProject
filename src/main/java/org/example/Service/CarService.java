@@ -6,6 +6,7 @@ import org.example.DTO.SearchCondition;
 import org.example.Repository.CarRepository;
 import org.example.Repository.RentalRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -60,16 +61,24 @@ public class CarService {
         Car car = carRepository.findByID(carID);
         if(car == null) {
             System.out.println("차량 정보가 존재하지 않습니다.");
+        } else if {
+            System.out.println("차량 [" + carID + "]는 대여 중인 상태가 아니므로 반납할 수 없습니다.");
         }
         Optional<Rental> activeRentalOpt = rentalRepository.findActiveRentalByCarID(carID);
-        if
-        if (!car.isAvailable()) {
+        Rental rental = activeRentalOpt.get();
+        double ratePerKm = 150.0;
+        boolean payResult = payService.processReturnPayment(rental, car, finalMileage, ratePerKm);
+        if (payResult) {
             car.setAvailable(true);
+            car.setCurrentMileage(finalMileage);
             carRepository.save(car);
+            rental.setReturnDate(LocalDateTime.now());
+            rental.setEndMileage(finalMileage);
+            rental.setRentalStatus("반납 완료");
+            rentalRepository.save(rental);
             System.out.println("차량 [" + carID + "]가 반납되었습니다.");
-
         } else {
-            System.out.println("차량 [" + carID + "]는 대여 중인 상태가 아니므로 반납할 수 없습니다.");
+            System.out.println("결제 실패로 반납 처리가 이루어지지 않았습니다.");
         }
     }
 
