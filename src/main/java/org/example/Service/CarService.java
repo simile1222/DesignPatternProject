@@ -1,6 +1,7 @@
 package org.example.Service;
 
 import org.example.DTO.Car;
+import org.example.Exception.ExitPageException;
 import org.example.SessionManager;
 import org.example.db.CarDAO;
 
@@ -11,36 +12,26 @@ public class CarService {
     private SessionManager sessionManager = SessionManager.INSTANCE;
     public CarService(){
     }
-    public List<Car> showCarList(){
-        return carDAO.getAllCars();
-    }
-    public Car getCar(String id){
-        return carDAO.getCarById(Integer.parseInt(id));
-    }
-    public Boolean lentCar(Car car){
-        if(carDAO.updateRentedStatus(car.getId(),true)){
-            sessionManager.setCar(car);
-            return true;
-        }
-        return false;
-    }
-    public Boolean returnCar(){
-        if(!checkCar()){return false;}
-        Car car = sessionManager.getCar();
-        if(carDAO.updateRentedStatus(car.getId(),false)){
-            sessionManager.setCar(null);
-            return true;
-        }else{
-            System.out.println("반납중 문제가 발생했다");
-            return false;
-        }
-    }
-    public Boolean checkCar(){
+
+    /**
+     * Page에서 필요한 메소드 목록
+     * showCarList()
+     * lentCar()
+     * returnCar()
+     *
+     * */
+
+    /**차량을 가지고 있는지 체크*/
+    public void checkHasCar(){
         if(sessionManager.getCar()==null){
-            System.out.println("대여중인 차량이 없다");
-            return false;
+            throw new ExitPageException();
         }
-        return true;
+    }
+    /** 차량을 가지고 없는지 체크*/
+    public void checkHasNoCar(){
+        if(sessionManager.getCar()!=null){
+            throw new ExitPageException();
+        }
     }
 
 
