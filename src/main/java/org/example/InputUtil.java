@@ -24,5 +24,6 @@ public class InputUtil  {
         }
         question.append("[0] 뒤로가기");
         return question.toString();
+
     }
 }

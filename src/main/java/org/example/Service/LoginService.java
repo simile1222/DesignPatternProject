@@ -9,6 +9,7 @@ import org.example.db.UserDAO;
 public class LoginService {
     UserDAO userDAO = new UserDAO();
     private SessionManager sessionManager = SessionManager.INSTANCE;
+    /** 중복된 아이디 확인*/
     public Boolean isDuplicated(String userId){
         if(userDAO.getUserById(userId)==null){
             return false;
