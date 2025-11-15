@@ -6,10 +6,12 @@ import java.sql.*;
 public class UserDAO {
     private final Connection conn;
 
-    public UserDAO(Connection conn) {
-        this.conn = conn;
+    public UserDAO() {
+        conn = DatabaseManager.connect();
     }
-
+    public User logIn(String userId,String hashPassword){
+        return null;
+    }
     // 회원 등록 (CREATE)
     public boolean insertUser(User user) {
         String sql = "INSERT INTO users (id, password_hash, license_verified) VALUES (?, ?, ?)";

@@ -3,6 +3,7 @@ package org.example.db;
 import org.example.DTO.Car;
 import org.example.DTO.SearchCondition;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,10 +11,10 @@ import java.util.List;
 public class CarDAO {
     private final Connection conn;
 
-    public CarDAO(Connection conn) {
-        this.conn = conn;
-    }
 
+    public CarDAO(){
+        conn = DatabaseManager.connect();
+    }
     // 차량 등록 (INSERT)
     public boolean insertCar(Car car) {
         String sql = "INSERT INTO cars (model, plate_no, parking_id, price_per_hour, price_per_km, mileage, is_rented) " +

@@ -1,21 +1,37 @@
 package org.example.Service;
 
 import org.example.DTO.Car;
-import org.example.DTO.SearchCondition;
-import org.example.Repository.CarRepository;
+import org.example.Exception.ExitPageException;
+import org.example.SessionManager;
+import org.example.db.CarDAO;
 
 import java.util.List;
 
 public class CarService {
-    CarRepository carRepository = CarRepository.getInstance();
-    public List<Car> showCarList(SearchCondition condition){
-        return carRepository.getCarList(condition);
+    CarDAO carDAO = new CarDAO();
+    private SessionManager sessionManager = SessionManager.INSTANCE;
+    public CarService(){
     }
-    public Boolean lentCar(String carId){
-        return null;
+
+    /**
+     * Page에서 필요한 메소드 목록
+     * showCarList()
+     * lentCar()
+     * returnCar()
+     *
+     * */
+
+    /**차량을 가지고 있는지 체크*/
+    public void checkHasCar(){
+        if(sessionManager.getCar()==null){
+            throw new ExitPageException();
+        }
     }
-    public Boolean returnCar(Car car){
-        return null;
+    /** 차량을 가지고 없는지 체크*/
+    public void checkHasNoCar(){
+        if(sessionManager.getCar()!=null){
+            throw new ExitPageException();
+        }
     }
 
 }
