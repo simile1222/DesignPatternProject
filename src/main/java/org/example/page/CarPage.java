@@ -12,14 +12,13 @@ import java.util.List;
 
 public class CarPage implements Page{
 
-    private SessionManager sessionManager;
     private CarService carService;
     private PayService payService;
     private LoginService loginService;
-    public CarPage(CarService carService,PayService payService){
+    public CarPage(CarService carService,PayService payService,LoginService loginService){
         this.carService=carService;
         this.payService=payService;
-        sessionManager = SessionManager.INSTANCE;
+        this.loginService = loginService;
     }
     @Override
     public void showPage() {
@@ -47,7 +46,7 @@ public class CarPage implements Page{
             loginService.checkLogIn();
             loginService.checkLicense();
             carService.checkHasNoCar();
-            lentCar(car);
+            loginService.lentCar(car);
         }catch (ExitPageException e) {
             return;
         }

@@ -25,6 +25,6 @@ public class MainPage implements Page{
         page = new LoginPage(new LoginService());
     }
     public void showCars(){
-        page = new CarPage(new CarService(),new PayService());
+        page = new CarPage(new CarService(),new PayService(),new LoginService());
     }
 }

@@ -41,6 +41,7 @@ public class LoginPage implements Page{
         }
         if(user!=null){
             sessionManager.setUser(user);
+            System.out.println("로그인이 완료되었다");
         }else{
             System.out.println("잘못된 회원정보");
         }
@@ -49,6 +50,7 @@ public class LoginPage implements Page{
         try{
             loginService.checkLogIn();
             sessionManager.setUser(null);
+            System.out.println("로그아웃 되었다");
         }catch (ExitPageException e){
             return;
         }
