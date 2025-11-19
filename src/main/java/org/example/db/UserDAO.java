@@ -10,6 +10,8 @@ public class UserDAO {
         this.conn = conn;
     }
 
+    //로그인 하면 유저아이디랑 패스워드 입력 받아서 유저 정보 반환하는 메소드?
+
     // 회원 등록 (CREATE)
     public boolean insertUser(User user) {
         String sql = "INSERT INTO users (id, password_hash, license_verified) VALUES (?, ?, ?)";
@@ -47,7 +49,7 @@ public class UserDAO {
         return null;
     }
 
-    // 3️⃣ 면허 인증 상태 갱신 (UPDATE)
+    //  면허 인증 상태 갱신 (UPDATE)
     public boolean updateLicense(String id, boolean verified) {
         String sql = "UPDATE users SET license_verified = ? WHERE id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
