@@ -2,21 +2,28 @@ package org.example.Service;
 
 import org.example.DTO.Car;
 import org.example.DTO.Rental;
+import org.example.Exception.ExitPageException;
+import org.example.InputUtil;
 import org.example.Payment.*;
-import org.example.Repository.CarRepository;
 
 public class PayService {
-    private CarRepository carRepository;
-    private PayStrategyFactory payFactory;
+
+    private PayStrategyFactory payFactory=PayStrategyFactory.INSTANCE;
 
     private Pay currentPayStrategy;
 
-    public PayService(CarRepository carRepository) {
-        this.carRepository = carRepository;
-        this.payFactory = new PayStrategyFactory();
-    }
-
-    public void setPayMethod(String methodType) {
+    public void setPayMethod() {
+        int payment = InputUtil.getInt("신용카드","카카오페이");
+        String methodType=null;
+        switch (payment){
+            case 1 ->methodType = "CARD";
+            case 2 ->methodType = "KAKAO";
+            case 0 -> throw new ExitPageException();
+            default -> {
+                System.out.println("올바르지 않은 선택지");
+                throw new ExitPageException();
+            }
+        }
         this.currentPayStrategy = payFactory.createPaymentMethod(methodType);
     }
 

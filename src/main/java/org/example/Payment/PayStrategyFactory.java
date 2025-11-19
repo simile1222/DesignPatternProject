@@ -1,6 +1,7 @@
 package org.example.Payment;
 
-public class PayStrategyFactory {
+public enum PayStrategyFactory {
+    INSTANCE;
     public Pay createPaymentMethod(String methodType) {
         if (methodType == null || methodType.isEmpty()) {
             System.out.println("결제 방식이 선택되지 않았습니다.");

@@ -75,7 +75,7 @@ public class CarPage implements Page{
             loginService.checkLogIn();
             loginService.checkLicense();
             carService.checkHasNoCar();
-            loginService.lentCar(car);
+            carService.lentCar(car);
         }catch (ExitPageException e) {
             return;
         }
@@ -85,6 +85,7 @@ public class CarPage implements Page{
             loginService.checkLogIn();
             loginService.checkLicense();
             carService.checkHasCar();
+            payService.setPayMethod();
             payService.pay();
             carService.returnCar();
         }catch (ExitPageException e){
