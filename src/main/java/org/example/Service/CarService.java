@@ -1,37 +1,35 @@
 package org.example.Service;
 
-import org.example.db.*;
+import org.example.db.CarDAO;
+import org.example.db.DatabaseManager;
 import org.example.DTO.Car;
 import org.example.DTO.SearchCondition;
 
-import java.sql.Connection;
 import java.util.List;
 import java.util.Scanner;
 
 public class CarService {
+
+    CarRepository carRepository = CarRepository.getInstance();
     private final LoginService loginService = new LoginService();
 
-    // 전체 차량 출력
-    public void showAllCars() {
-        try (Connection conn = DatabaseManager.connect()) {
-            CarDAO dao = new CarDAO(conn);
-            List<Car> cars = dao.getAllCars();
-            System.out.println("\n🚗 [전체 차량 목록]");
-            for (Car c : cars) {
-                String status = c.isRented() ? "대여중" : "대여가능";
-                System.out.printf("[%d] %s (%s) - %,d원/시간 - %s\n",
-                        c.getId(), c.getModel(), c.getPlateNo(),
-                        (int)c.getPricePerHour(), status);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    // 팀원 기능: 조건 기반 리스트 조회
+    public List<Car> showCarList(SearchCondition condition){
+        return carRepository.getCarList(condition);
+    }
+
+    public Boolean lentCar(String carId){
+        return null; // 팀원 기능 (아직 미구현)
+    }
+
+    public Boolean returnCar(Car car){
+        return null; // 팀원 기능 (아직 미구현)
     }
 
     // 🔍 조건 기반 차량 검색
     public void searchAvailableCars(Scanner sc) {
-        try (Connection conn = DatabaseManager.connect()) {
-            CarDAO dao = new CarDAO(conn);
+        try {
+            CarDAO dao = new CarDAO(); // ★ 수정됨
             SearchCondition cond = new SearchCondition();
 
             System.out.println("\n🔎 [대여 가능 차량 검색]");
@@ -70,17 +68,18 @@ public class CarService {
         }
     }
 
-    // 대여 기능 (면허 인증 포함)
+    // 🔐 면허 인증 포함 대여 기능
     public void rentCar(String userId, Scanner sc) {
         if (!loginService.isLicenseVerified(userId)) {
             System.out.println("❌ 대여 불가: 면허 미인증 상태입니다.");
             return;
         }
 
-        try (Connection conn = DatabaseManager.connect()) {
-            CarDAO dao = new CarDAO(conn);
+        try {
+            CarDAO dao = new CarDAO(); // ★ 수정됨
             System.out.print("대여할 차량 ID ▶ ");
             int carId = sc.nextInt();
+
             boolean success = dao.updateRentedStatus(carId, true);
             if (success) System.out.println("✅ 차량 대여 완료!");
             else System.out.println("❌ 차량 대여 실패");
@@ -90,10 +89,11 @@ public class CarService {
     }
 
     public void returnCar(Scanner sc) {
-        try (Connection conn = DatabaseManager.connect()) {
-            CarDAO dao = new CarDAO(conn);
+        try {
+            CarDAO dao = new CarDAO(); // ★ 수정됨
             System.out.print("반납할 차량 ID ▶ ");
             int carId = sc.nextInt();
+
             boolean success = dao.updateRentedStatus(carId, false);
             if (success) System.out.println("✅ 차량 반납 완료!");
             else System.out.println("❌ 차량 반납 실패");
