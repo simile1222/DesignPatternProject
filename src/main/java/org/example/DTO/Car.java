@@ -1,37 +1,18 @@
 package org.example.DTO;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 public class Car {
-    private String carID;
-    private String modelName;
-    private String carPlateNumber;
-    private boolean isAvailable;
-
-    private String parkingLocation;
-
-    private Integer baseRentalPrice;
-    private double currentMileage;
-    
-
-    public Car(String carID, String modelName, Integer baseRentalPrice) {
-        this.carID = carID;
-        this.modelName = modelName;
-        this.baseRentalPrice = baseRentalPrice;
-        this.isAvailable = true;
-        this.currentMileage = 0.0;
-    }
-
-    public void setAvailable(boolean available) {
-        this.isAvailable = available;
-    }
-    public void setCurrentMileage(double mileage) {
-        this.currentMileage = mileage;
-    }
-
-    public boolean isAvailable() {return isAvailable;}
-    public String getCarID() {return carID;}
-    public String getModelName() {return modelName;}
-    public String getCarPlateNumber() {return carPlateNumber;}
-    
-    public Integer getBaseRentalPrice() {return baseRentalPrice;}
-    public double getCurrentMileage() {return currentMileage;}
+    private int id;                // 차량 고유 ID (PK)
+    private String model;          // 차량 모델명
+    private String plateNo;        // 번호판
+    private int parkingId;         // 주차장 ID (FK)
+    private double pricePerHour;   // 시간당 요금
+    private double pricePerKm;     // 거리당 요금
+    private int mileage;           // 주행 거리
+    private boolean isRented;      // 대여 중 여부
+    private String createdAt;      // 등록 시각
 }
