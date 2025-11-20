@@ -9,6 +9,28 @@ public class UserDAO {
     public UserDAO(Connection conn) {
         this.conn = conn;
     }
+    public User logIn(String userId, String hashPassword) {
+        String sql = "SELECT * FROM users WHERE id = ? AND password_hash = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, hashPassword);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return User.builder()
+                        .id(rs.getString("id"))
+                        .passwordHash(rs.getString("password_hash"))
+                        .licenseVerified(rs.getInt("license_verified") == 1)
+                        .createdAt(rs.getString("created_at"))
+                        .build();
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ 로그인 쿼리 실행 실패: " + e.getMessage());
+        }
+
+        return null; // 로그인 실패
+    }
+
 
     //로그인 하면 유저아이디랑 패스워드 입력 받아서 유저 정보 반환하는 메소드?
 
