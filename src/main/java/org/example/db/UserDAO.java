@@ -9,9 +9,29 @@ public class UserDAO {
     public UserDAO() {
         conn = DatabaseManager.connect();
     }
-    public User logIn(String userId,String hashPassword){
-        return null;
+   
+    public User logIn(String userId, String hashPassword) {
+        String sql = "SELECT * FROM users WHERE id = ? AND password_hash = ?";
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, userId);
+            pstmt.setString(2, hashPassword);
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) {
+                return User.builder()
+                        .id(rs.getString("id"))
+                        .passwordHash(rs.getString("password_hash"))
+                        .licenseVerified(rs.getInt("license_verified") == 1)
+                        .createdAt(rs.getString("created_at"))
+                        .build();
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ 로그인 쿼리 실행 실패: " + e.getMessage());
+        }
+
+        return null; // 로그인 실패
     }
+
     // 회원 등록 (CREATE)
     public boolean insertUser(User user) {
         String sql = "INSERT INTO users (id, password_hash, license_verified) VALUES (?, ?, ?)";
@@ -49,7 +69,7 @@ public class UserDAO {
         return null;
     }
 
-    // 3️⃣ 면허 인증 상태 갱신 (UPDATE)
+    //  면허 인증 상태 갱신 (UPDATE)
     public boolean updateLicense(String id, boolean verified) {
         String sql = "UPDATE users SET license_verified = ? WHERE id = ?";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {

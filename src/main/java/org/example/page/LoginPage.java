@@ -1,5 +1,6 @@
 package org.example.page;
 
+
 import org.example.DTO.User;
 import org.example.Exception.ExitPageException;
 import org.example.InputUtil;
@@ -11,6 +12,7 @@ public class LoginPage implements Page{
     public LoginPage(LoginService loginService){
         this.loginService = loginService;
         sessionManager = SessionManager.INSTANCE;
+
     }
     private LoginService loginService;
     private SessionManager sessionManager;
@@ -42,7 +44,7 @@ public class LoginPage implements Page{
         if(user!=null){
             sessionManager.setUser(user);
             System.out.println("로그인이 완료되었다");
-        }else{
+        } else {
             System.out.println("잘못된 회원정보");
         }
     }

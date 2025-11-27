@@ -22,6 +22,7 @@ public class InputUtil  {
         for (int i=0;i<answers.length;i++){
             question.append(String.format("[%d] %s ", i + 1, answers[i]));
         }
+
         question.append("[0] 뒤로가기");
         return question.toString();
 

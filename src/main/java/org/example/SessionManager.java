@@ -5,6 +5,7 @@ import lombok.Getter;
 import org.example.DTO.Car;
 import org.example.DTO.User;
 
+
 public enum SessionManager {
     INSTANCE;
 
@@ -26,4 +27,5 @@ public enum SessionManager {
     public void setUser(User user) {
         this.user = user;
     }
+
 }
