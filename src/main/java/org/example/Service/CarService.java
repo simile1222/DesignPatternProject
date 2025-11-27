@@ -3,68 +3,37 @@ package org.example.Service;
 import org.example.db.CarDAO;
 import org.example.db.DatabaseManager;
 import org.example.DTO.Car;
-import org.example.DTO.SearchCondition;
+import org.example.Exception.ExitPageException;
+import org.example.SessionManager;
+import org.example.db.CarDAO;
 
 import java.util.List;
 import java.util.Scanner;
 
 public class CarService {
-
-    CarRepository carRepository = CarRepository.getInstance();
-    private final LoginService loginService = new LoginService();
-
-    // 팀원 기능: 조건 기반 리스트 조회
-    public List<Car> showCarList(SearchCondition condition){
-        return carRepository.getCarList(condition);
+    CarDAO carDAO = new CarDAO();
+    private SessionManager sessionManager = SessionManager.INSTANCE;
+    public CarService(){
     }
 
-    public Boolean lentCar(String carId){
-        return null; // 팀원 기능 (아직 미구현)
+    /**
+     * Page에서 필요한 메소드 목록
+     * showCarList()
+     * lentCar()
+     * returnCar()
+     *
+     * */
+
+    /**차량을 가지고 있는지 체크*/
+    public void checkHasCar(){
+        if(sessionManager.getCar()==null){
+            throw new ExitPageException();
+        }
     }
-
-    public Boolean returnCar(Car car){
-        return null; // 팀원 기능 (아직 미구현)
-    }
-
-    // 🔍 조건 기반 차량 검색
-    public void searchAvailableCars(Scanner sc) {
-        try {
-            CarDAO dao = new CarDAO(); // ★ 수정됨
-            SearchCondition cond = new SearchCondition();
-
-            System.out.println("\n🔎 [대여 가능 차량 검색]");
-            System.out.print("모델명 입력 (없으면 Enter): ");
-            String model = sc.nextLine();
-            if (!model.isBlank()) cond.setModel(model);
-
-            System.out.print("주차장 ID 입력 (없으면 Enter): ");
-            String parkingInput = sc.nextLine();
-            if (!parkingInput.isBlank()) cond.setParkingId(Integer.parseInt(parkingInput));
-
-            System.out.print("최소 요금 입력 (없으면 Enter): ");
-            String minInput = sc.nextLine();
-            if (!minInput.isBlank()) cond.setMinPrice(Double.parseDouble(minInput));
-
-            System.out.print("최대 요금 입력 (없으면 Enter): ");
-            String maxInput = sc.nextLine();
-            if (!maxInput.isBlank()) cond.setMaxPrice(Double.parseDouble(maxInput));
-
-            List<Car> result = dao.getAvailableCars(cond);
-
-            if (result == null) {
-                System.out.println("❌ DB 오류 발생");
-            } else if (result.isEmpty()) {
-                System.out.println("⚠️ 조건에 맞는 차량이 없습니다.");
-            } else {
-                System.out.println("\n🚗 [검색 결과]");
-                for (Car c : result) {
-                    System.out.printf("[%d] %s (%s) - %,d원/시간 - 주차장: %d\n",
-                            c.getId(), c.getModel(), c.getPlateNo(),
-                            (int)c.getPricePerHour(), c.getParkingId());
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    /** 차량을 가지고 없는지 체크*/
+    public void checkHasNoCar(){
+        if(sessionManager.getCar()!=null){
+            throw new ExitPageException();
         }
     }
 
