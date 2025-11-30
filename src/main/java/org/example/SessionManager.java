@@ -3,6 +3,7 @@ package org.example;
 import lombok.Data;
 import lombok.Getter;
 import org.example.DTO.Car;
+import org.example.DTO.Rental;
 import org.example.DTO.User;
 
 
@@ -26,6 +27,14 @@ public enum SessionManager {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    private Rental rental;
+    public Rental getRental() {
+        return rental;
+    }
+    public void setRental(Rental rental) {
+        this.rental = rental;
     }
 
 }
