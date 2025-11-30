@@ -1,12 +1,10 @@
 package org.example.Service;
 
 import org.example.db.CarDAO;
-
 import org.example.DTO.Car;
 import org.example.DTO.Rental;
 import org.example.DTO.SearchCondition;
 import org.example.DTO.User;
-import org.example.Repository.CarRepository;
 import org.example.Repository.RentalRepository;
 import org.example.Exception.ExitPageException;
 import org.example.SessionManager;
@@ -15,29 +13,29 @@ import java.util.List;
 import java.util.UUID;
 
 public class CarService {
-    private CarRepository carRepository;
+    private CarDAO carDAO;
     private RentalRepository rentalRepository;
     private PayService payService;
+    public CarService(RentalRepository rentalRepository, PayService payService) {
+        this.carDAO = new CarDAO();
+        this.rentalRepository = rentalRepository;
+        this.payService = payService;
+    }
     public void checkHasCar(){
-        if(sessionManager.getCar()==null){
+        if(SessionManager.INSTANCE.getCar()==null){
             throw new ExitPageException();
         }
     }
     public void checkHasNoCar(){
-        if(sessionManager.getCar()!=null){
+        if(SessionManager.INSTANCE.getCar()!=null){
             throw new ExitPageException();
         }
     }
-    public CarService(CarRepository carRepository, RentalRepository rentalRepository, PayService payService) {
-        this.carRepository = carRepository;
-        this.rentalRepository = rentalRepository;
-        this.payService = payService;
-    }
     public List<Car> showCarList(SearchCondition condition) {
-        return carRepository.getCarList(condition);
+        return carDAO.getAvailableCars(condition);
     }
-    public List<Car> getLendableCars() {
-        return carRepository.findLendableCars();
+    public List<Car> showAllCarList() {
+        return carDAO.getAllCars();
     }
     public void getAllCars() {
         List<Car> allCars = carRepository.findAll();
@@ -52,60 +50,62 @@ public class CarService {
             System.out.println("--------------------------");
         }
     }
-    public void rent(int rentalHours) {
+    public void lentCar(Car car, int rentalHours) {
         User sessionUser = SessionManager.INSTANCE.getUser();
-        Car sessionCar = SessionManager.INSTANCE.getCar();
 
         if (sessionUser == null) {
-            System.out.println("로그인 정보가 없습니다.");
-            return;
-        }
-        if (sessionCar == null) {
-            System.out.println("차량 정보가 존재하지 않습니다.");
+            System.out.println("로그인 해주세요.");
             return;
         }
 
-        if (sessionUser.getLicenseNumber() == null) {
+        if (!loginService.isLicenseVerified(userId)) {
             System.out.println("❌ 대여 불가: 면허 미인증 상태입니다.");
         }
-
-        Car car = carRepository.findByID(sessionCar.getCarID());
-        if(car.isAvailable()) {
+        int carIdInt;
+        try {
+            carIdInt = Integer.parseInt(car.getCarID());
+        } catch (NumberFormatException e) {
+            System.out.println("차량 ID 오류");
+            return;
+        }
+        Car targetCar = carDAO.getCarById(carIdInt);
+        if(targetCar != null && targetCar.isAvailable()) {
             String rentalID = UUID.randomUUID().toString();
             double startMileage = car.getCurrentMileage();
 
-            Rental rental = new Rental(rentalID, sessionUser.getUserID(), sessionCar.getCarID(), startMileage);
+            Rental rental = new Rental(rentalID, sessionUser.getId(), targetCar.getCarID(), startMileage);
             rentalRepository.save(rental);
 
-            car.setAvailable(false);
-            carRepository.save(car);
-
-            SessionManager.INSTANCE.setRental(rental);
-            System.out.println("차량 [" + sessionCar.getCarID() + "]가 대여되었습니다.");
-        } else {
-            System.out.println("차량 [" + sessionCar.getCarID() + "]는 이미 대여된 차량입니다.");
+            boolean updateSuccess = carDAO.updateRentedStatus(carIdInt, true);
+            if (updateSuccess) {
+                targetCar.setAvailable(false);
+                SessionManager.INSTANCE.setCar(targetCar);
+                SessionManager.INSTANCE.setRental(rental);
+                System.out.println("차량 [" + targetCar.getModelName() + "]가 대여되었습니다.");
+            }
+        }
+        else {
+            System.out.println("선택하신 차량은 이미 대여된 차량입니다.");
         }
     }
-    public void returnCar(double finalMileage, String paymethod) {
+    public void returnCar(double finalMileage, String payMethod) {
         Car sessionCar = SessionManager.INSTANCE.getCar();
         Rental sessionRental = SessionManager.INSTANCE.getRental();
-        String targetCarID = (sessionCar != null) ? sessionCar.getCarID() : null;
 
-        if(targetCarID == null) {
-            System.out.println("차량 정보가 존재하지 않습니다.");
-        }
-        Car car = carRepository.findByID(targetCarID);
-        Rental rental = rentalRepository.findActiveRentalByCarID(targetCarID);
+        int carIdInt = Integer.parseInt(sessionCar.getCarID());
+        Car car = carDAO.getCarById(carIdInt);
+
         double ratePerKm = 150.0;
-        boolean payResult = payService.processReturnPayment(rental, car, finalMileage, ratePerKm, paymethod);
+        boolean payResult = payService.processReturnPayment(sessionRental, car, finalMileage, payMethod);
+
         if (payResult) {
+            carDAO.updateRentedStatus(carIdInt, false);
             car.setAvailable(true);
             car.setCurrentMileage(finalMileage);
-            carRepository.save(car);
 
-            rental.setEndMileage(finalMileage);
-            rental.setRentalStatus("반납 완료");
-            rentalRepository.save(rental);
+            sessionRental.setEndMileage(finalMileage);
+            sessionRental.setRentalStatus("반납 완료");
+            rentalRepository.save(sessionRental);
 
             System.out.println("차량 [" + car.getModelName() + "]가 반납되었습니다.");
 
