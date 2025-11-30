@@ -1,5 +1,6 @@
 package org.example.Service;
 
+<<<<<<< HEAD
 import org.example.DTO.Car;
 import org.example.DTO.Rental;
 import org.example.Payment.*;
@@ -31,3 +32,11 @@ public class PayService {
         return payResult;
     }
 }
+
+/*
+public class PayService {
+    public void pay(){
+        return;
+    }
+}
+ */
