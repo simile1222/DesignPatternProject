@@ -1,11 +1,18 @@
 package org.example.DTO;
 
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
+import java.time.LocalDateTime;
+@Setter
+@Getter
+@AllArgsConstructor
 public class Rental {
     private String rentalID;
     private String userID;
     private String carID;
+    private Integer rentalHour;
 
     private LocalDateTime rentDate;
     private double startMileage;
@@ -25,14 +32,4 @@ public class Rental {
         this.rentalStatus = "대여 중";
     }
 
-    public String getRentalID() {return rentalID;}
-    public String getUserID() {return userID;}
-    public String getCarID() {return carID;}
-    public double getStartMileage() {return startMileage;}
-    public String getRentalStatus() {return rentalStatus;}
-
-    public void setReturnDate(LocalDateTime returnDate) {this.returnDate = returnDate;}
-    public void setEndMileage(double endMileage) {this.endMileage = endMileage;}
-    public void setFinalPrice(Integer finalPrice) {this.finalPrice = finalPrice;}
-    public void setRentalStatus(String rentalStatus) {this.rentalStatus = rentalStatus;}
 }

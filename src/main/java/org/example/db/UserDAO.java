@@ -5,8 +5,14 @@ import java.sql.*;
 
 public class UserDAO {
     private final Connection conn;
-
-    public UserDAO() {
+    private static UserDAO instance;
+    public static UserDAO getInstance(){
+        if(instance==null){
+            instance=new UserDAO();
+        }
+        return instance;
+    }
+    private UserDAO() {
         conn = DatabaseManager.connect();
     }
    

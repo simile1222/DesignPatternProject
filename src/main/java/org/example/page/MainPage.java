@@ -10,10 +10,11 @@ public class MainPage implements Page{
     @Override
     public void showPage() {
         while(true){
-            int input = InputUtil.getInt("회원정보","차량정보");
+            int input = InputUtil.getInt("회원관리","차량관리","내정보");
             switch (input) {
                 case 1 -> handleLogin();
                 case 2 -> showCars();
+                case 3 -> showInfo();
                 case 0 -> {
                     return;
                 }
@@ -22,9 +23,12 @@ public class MainPage implements Page{
         }
     }
     public void handleLogin(){
-        page = new LoginPage(new LoginService());
+        page = new LoginPage();
     }
     public void showCars(){
-        page = new CarPage(new CarService(),new PayService(),new LoginService());
+        page = new CarPage();
+    }
+    public void showInfo(){
+        page = new InfoPage();
     }
 }

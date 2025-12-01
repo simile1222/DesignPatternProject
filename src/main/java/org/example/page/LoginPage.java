@@ -9,8 +9,8 @@ import org.example.SessionManager;
 
 
 public class LoginPage implements Page{
-    public LoginPage(LoginService loginService){
-        this.loginService = loginService;
+    public LoginPage(){
+        loginService = LoginService.getInstance();
         sessionManager = SessionManager.INSTANCE;
 
     }
@@ -19,7 +19,7 @@ public class LoginPage implements Page{
     @Override
     public void showPage() {
         while(true){
-            int input =InputUtil.getInt("로그인","로그아웃","회원가입","면허등록");
+            int input =InputUtil.getInt("로그인","로그아웃","회원가입","내정보");
             switch (input) {
                 case 1 -> login();
                 case 2 -> logout();

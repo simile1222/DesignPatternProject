@@ -10,9 +10,15 @@ import java.util.List;
 
 public class CarDAO {
     private final Connection conn;
+    private static CarDAO instance;
+    public static CarDAO getInstance(){
+        if(instance==null){
+            instance=new CarDAO();
+        }
+        return instance;
+    }
 
-
-    public CarDAO(){
+    private CarDAO(){
         conn = DatabaseManager.connect();
     }
     // 차량 등록 (INSERT)
@@ -20,13 +26,13 @@ public class CarDAO {
         String sql = "INSERT INTO cars (model, plate_no, parking_id, price_per_hour, price_per_km, mileage, is_rented) " +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, car.getModel());
-            pstmt.setString(2, car.getPlateNo());
+            pstmt.setString(1, car.getModelName());
+            pstmt.setString(2, car.getCarPlateNumber());
             pstmt.setInt(3, car.getParkingId());
             pstmt.setDouble(4, car.getPricePerHour());
             pstmt.setDouble(5, car.getPricePerKm());
             pstmt.setInt(6, car.getMileage());
-            pstmt.setInt(7, car.isRented() ? 1 : 0);
+            pstmt.setInt(7, car.isAvailable() ? 1 : 0);
             pstmt.executeUpdate();
             return true;
         } catch (SQLException e) {
@@ -44,14 +50,14 @@ public class CarDAO {
 
             while (rs.next()) {
                 Car car = Car.builder()
-                        .id(rs.getInt("id"))
-                        .model(rs.getString("model"))
-                        .plateNo(rs.getString("plate_no"))
+                        .carID(rs.getString("id"))
+                        .modelName(rs.getString("model"))
+                        .carPlateNumber(rs.getString("plate_no"))
                         .parkingId(rs.getInt("parking_id"))
                         .pricePerHour(rs.getDouble("price_per_hour"))
                         .pricePerKm(rs.getDouble("price_per_km"))
                         .mileage(rs.getInt("mileage"))
-                        .isRented(rs.getInt("is_rented") == 1)
+                        .isAvailable(rs.getInt("is_rented") == 1)
                         .createdAt(rs.getString("created_at"))
                         .build();
                 list.add(car);
@@ -101,14 +107,14 @@ public class CarDAO {
             ResultSet rs = pstmt.executeQuery();
             while (rs.next()) {
                 Car car = Car.builder()
-                        .id(rs.getInt("id"))
-                        .model(rs.getString("model"))
-                        .plateNo(rs.getString("plate_no"))
+                        .carID(rs.getString("id"))
+                        .modelName(rs.getString("model"))
+                        .carPlateNumber(rs.getString("plate_no"))
                         .parkingId(rs.getInt("parking_id"))
                         .pricePerHour(rs.getDouble("price_per_hour"))
                         .pricePerKm(rs.getDouble("price_per_km"))
                         .mileage(rs.getInt("mileage"))
-                        .isRented(false)
+                        .isAvailable(true)
                         .createdAt(rs.getString("created_at"))
                         .build();
                 list.add(car);
@@ -134,14 +140,14 @@ public class CarDAO {
             ResultSet rs = pstmt.executeQuery();
             if (rs.next()) {
                 return Car.builder()
-                        .id(rs.getInt("id"))
-                        .model(rs.getString("model"))
-                        .plateNo(rs.getString("plate_no"))
+                        .carID(rs.getString("id"))
+                        .modelName(rs.getString("model"))
+                        .carPlateNumber(rs.getString("plate_no"))
                         .parkingId(rs.getInt("parking_id"))
                         .pricePerHour(rs.getDouble("price_per_hour"))
                         .pricePerKm(rs.getDouble("price_per_km"))
                         .mileage(rs.getInt("mileage"))
-                        .isRented(rs.getInt("is_rented") == 1)
+                        .isAvailable(rs.getInt("is_rented") == 1)
                         .createdAt(rs.getString("created_at"))
                         .build();
             }

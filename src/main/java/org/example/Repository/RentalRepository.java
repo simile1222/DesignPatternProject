@@ -5,6 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RentalRepository {
+    private static RentalRepository instance;
+    public static RentalRepository getInstance(){
+        if(instance ==null){
+            instance = new RentalRepository();
+        }
+        return instance;
+    }
     private Map<String, Rental> rentalDB = new HashMap<>();
 
     public void save(Rental rental) {

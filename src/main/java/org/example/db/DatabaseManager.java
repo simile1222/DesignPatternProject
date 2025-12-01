@@ -10,10 +10,10 @@ public class DatabaseManager {
     public static Connection connect() {
         try {
             Connection conn = DriverManager.getConnection(URL);
-            System.out.println("✅ SQLite 연결 성공!");
+//            System.out.println("✅ SQLite 연결 성공!");
             return conn;
         } catch (SQLException e) {
-            System.out.println("❌ DB 연결 실패: " + e.getMessage());
+//            System.out.println("❌ DB 연결 실패: " + e.getMessage());
             return null;
         }
     }
