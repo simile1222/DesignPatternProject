@@ -17,7 +17,7 @@ public class Car {
     private int parkingId;         // 주차장 ID (FK)
     private String parkingLocation;  //주차 위치
     @Builder.Default
-    private Integer baseRentalPrice=20000;  //기본 대여료
+    private Integer baseRentalPrice = 20000;  //기본 대여료
     private double currentMileage;  //현재 주행거리
 
     private double pricePerHour;   // 시간당 요금
