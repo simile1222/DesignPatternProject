@@ -1,0 +1,217 @@
+Car Rental App - 구현 현황
+
+========================================
+✅ 완료된 구현
+========================================
+
+Models (모델 레이어) - 100% 완료
+------------------------------------
+✅ lib/models/user.dart - User DTO (id, passwordHash, licenseVerified, createdAt)
+✅ lib/models/car.dart - Car DTO (id, model, plateNo, parkingId, pricePerHour, pricePerKm, mileage, isRented, createdAt)
+✅ lib/models/rental.dart - Rental DTO
+✅ lib/models/search_condition.dart - SearchCondition DTO (model, isRented, minPrice, maxPrice, parkingId)
+
+DAO Layer (데이터 접근 레이어) - 100% 완료
+--------------------------------------------
+✅ lib/data/database_manager.dart - SQLite 싱글톤 매니저
+   - connect() 메서드 (싱글톤 패턴)
+   - users, cars, rentals 테이블 생성
+   - 샘플 데이터 삽입
+
+✅ lib/data/user_dao.dart - UserDAO
+   - logIn(userId, hashPassword) - 로그인 인증
+   - insertUser(user) - 회원 등록
+   - getUserById(id) - 회원 조회
+   - updateLicense(id, verified) - 면허 인증 상태 갱신
+   - deleteUser(id) - 회원 삭제
+   * Java PreparedStatement처럼 rawQuery/rawInsert/rawUpdate/rawDelete 사용
+
+✅ lib/data/car_dao.dart - CarDAO
+   - insertCar(car) - 차량 등록
+   - getAllCars() - 전체 차량 조회
+   - getAvailableCars(cond) - 조건 기반 대여 가능 차량 조회 (동적 쿼리)
+   - getCarById(id) - 특정 차량 조회
+   - updateRentedStatus(carId, rented) - 대여 상태 업데이트
+   - deleteCar(id) - 차량 삭제
+
+Repository Layer (저장소 레이어) - 100% 완료
+-----------------------------------------------
+✅ lib/repositories/user_repository.dart - UserRepository
+✅ lib/repositories/car_repository.dart - CarRepository
+✅ lib/repositories/rental_repository.dart - RentalRepository
+
+Service Layer (서비스 레이어) - 100% 완료
+------------------------------------------
+✅ lib/services/login_service.dart - LoginService
+   - isDuplicated(userId) - 중복 ID 확인
+   - login(userId, password) - 로그인 + 세션 저장
+   - signIn(userId, password) - 회원가입 (SHA256 해시)
+   - updateLicense(id, license) - 면허 인증 + 세션 갱신
+   - logout() - 세션 클리어
+   - checkLogIn() - 로그인 필수 확인 (ExitPageException)
+   - checkLogOut() - 로그아웃 필수 확인
+   - checkLicense() - 면허 인증 필수 확인
+
+✅ lib/services/car_service.dart - CarService
+   - checkHasCar() - 차량 보유 확인
+   - checkHasNoCar() - 차량 미보유 확인
+   - getAvailableCar(condition) - 대여 가능 차량 조회
+   - rentCar(userId, carId) - 면허 인증 포함 대여
+   - returnCar(carId) - 차량 반납
+   - getCurrentCar() - 현재 차량 조회
+
+✅ lib/services/pay_service.dart - PayService
+
+Utils (유틸리티) - 100% 완료
+------------------------------
+✅ lib/utils/session_manager.dart - SessionManager (싱글톤)
+   - INSTANCE 패턴 (Java enum 싱글톤과 유사)
+   - getUser(), setUser(), getCar(), setCar(), clear()
+
+✅ lib/utils/sha256_util.dart - SHA256 해시 유틸리티
+   - hash(input) - SHA256 해시 생성
+   - matches(input, expectedHexHash) - 해시 비교
+   - _constantTimeEquals() - 타이밍 공격 방지
+
+Exceptions (예외 처리) - 100% 완료
+-----------------------------------
+✅ lib/exceptions/exit_page_exception.dart - ExitPageException
+
+Payment (Strategy Pattern) - 100% 완료
+---------------------------------------
+✅ lib/services/payment_strategy.dart - PayStrategy 인터페이스
+✅ lib/services/credit_card_payment.dart - CreditCardPayment
+✅ lib/services/kakao_pay.dart - KakaoPay
+✅ lib/services/payment.dart - Payment 클래스
+✅ lib/services/payment_strategy_factory.dart - PayStrategyFactory
+
+Calculator (Decorator Pattern) - 100% 완료
+-------------------------------------------
+✅ lib/services/price_calculator.dart - PriceCalculator 인터페이스
+✅ lib/services/base_price_calculator.dart - BasePriceCalculator
+✅ lib/services/price_decorator.dart - PriceDecorator 추상 클래스
+✅ lib/services/mileage_fee_decorator.dart - MileageFeeDecorator
+
+Screens (화면 레이어) - 80% 완료
+---------------------------------
+✅ lib/screens/splash_screen.dart - 스플래시 화면
+✅ lib/screens/welcome_screen.dart - 환영 화면
+✅ lib/screens/login_screen.dart - 로그인 화면 (백엔드 연동 필요)
+✅ lib/screens/signup_screen.dart - 회원가입 화면 (백엔드 연동 필요)
+✅ lib/screens/home_screen.dart - 홈 화면 (DB 연동 필요)
+
+========================================
+⚠️ 미완성 부분
+========================================
+
+화면-백엔드 연동 (50% 완료)
+----------------------------
+⚠️ LoginScreen - LoginService 연동 필요
+⚠️ SignUpScreen - LoginService 연동 필요
+⚠️ HomeScreen - CarService 연동하여 실제 DB 차량 표시 필요
+
+추가 필요 화면들
+------------------
+❌ 차량 검색 화면 - SearchCondition 사용
+❌ 차량 상세 화면 - 차량 정보 표시
+❌ 차량 대여 화면 - 대여 프로세스 + 결제
+❌ 결제 화면 - Payment Strategy 사용
+❌ 대여 내역 화면 - 내 예약/대여 목록
+❌ 프로필/설정 화면 - 사용자 정보, 면허 인증
+
+기능 구현
+----------
+❌ 검색 기능 - SearchCondition 활용
+❌ 하단 네비게이션 탭 내용 (검색, 예약, 내정보)
+❌ 세션 지속성 - 앱 재시작 시 로그인 상태 유지
+
+========================================
+적용된 디자인 패턴
+========================================
+
+1. ✅ Singleton Pattern - DatabaseManager, SessionManager
+2. ✅ DAO Pattern - UserDAO, CarDAO
+3. ✅ Repository Pattern - 각 Repository 클래스들
+4. ✅ Decorator Pattern - PriceCalculator 계층
+5. ✅ Strategy Pattern - Payment 전략들
+6. ✅ Factory Pattern - PayStrategyFactory
+
+========================================
+데이터베이스 테이블 구조
+========================================
+
+users 테이블
+------------
+- id: TEXT (PRIMARY KEY)
+- passwordHash: TEXT (SHA256 해시)
+- licenseVerified: INTEGER (0 또는 1)
+- createdAt: TEXT (ISO8601 날짜)
+
+cars 테이블
+-----------
+- id: INTEGER (PRIMARY KEY, AUTOINCREMENT)
+- model: TEXT
+- plateNo: TEXT (UNIQUE)
+- parkingId: INTEGER
+- pricePerHour: REAL
+- pricePerKm: REAL
+- mileage: INTEGER
+- isRented: INTEGER (0 또는 1)
+- createdAt: TEXT (ISO8601 날짜)
+
+rentals 테이블
+--------------
+- rentalId: TEXT (PRIMARY KEY)
+- userId: TEXT (FOREIGN KEY -> users.id)
+- carId: INTEGER (FOREIGN KEY -> cars.id)
+- startTime: TEXT (ISO8601 날짜)
+- endTime: TEXT (ISO8601 날짜)
+- distance: INTEGER
+
+========================================
+다음 우선 작업
+========================================
+
+우선순위 1: 기존 화면 백엔드 연동
+-------------------------------------
+1. LoginScreen에서 LoginService.login() 호출
+2. SignUpScreen에서 LoginService.signIn() 호출
+3. HomeScreen에서 CarService로 실제 DB 차량 목록 표시
+4. 로그인 후 SessionManager에 User 저장
+
+우선순위 2: 주요 화면 추가
+---------------------------
+1. 차량 상세 화면 - 차량 클릭 시 표시
+2. 차량 대여 화면 - 면허 확인 + 결제
+3. 대여 내역 화면 - 내 예약 목록
+
+우선순위 3: 기능 완성
+----------------------
+1. 검색 기능 구현
+2. 하단 네비게이션 탭 내용 구현
+3. 면허 인증 화면/기능
+
+========================================
+의존성 (pubspec.yaml)
+========================================
+
+dependencies:
+  - flutter
+  - cupertino_icons: ^1.0.2
+  - sqflite: ^2.3.0 (SQLite 데이터베이스)
+  - path: ^1.8.3 (경로 처리)
+  - crypto: ^3.0.3 (SHA256 해시)
+
+========================================
+Java 프로젝트와 일치도
+========================================
+
+✅ DTO/Models: 100% 일치
+✅ DAO Layer: 100% 일치
+✅ Service Layer: 100% 일치
+✅ Utils (SessionManager, Sha256Util): 100% 일치
+✅ Exceptions: 100% 일치
+✅ Design Patterns: 100% 일치
+⚠️ UI/Screens: Java는 CLI, Flutter는 GUI로 구현 방식 다름
+
+========================================

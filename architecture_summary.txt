@@ -1,0 +1,229 @@
+Car Rental App - 아키텍처 구조
+
+========================================
+생성된 파일 구조
+========================================
+
+Models (모델 레이어)
+--------------------
+- lib/models/user.dart - User 클래스
+- lib/models/car.dart - Car 클래스
+- lib/models/rental.dart - Rental 클래스
+- lib/models/search_condition.dart - SearchCondition 클래스
+
+DAO Layer (데이터 접근 레이어)
+-----------------------------
+- lib/data/database_manager.dart - SQLite 데이터베이스 매니저 (Singleton)
+- lib/data/user_dao.dart - UserDAO
+- lib/data/car_dao.dart - CarDAO
+
+Repository Layer (저장소 레이어)
+-------------------------------
+- lib/repositories/user_repository.dart - UserRepository
+- lib/repositories/car_repository.dart - CarRepository
+- lib/repositories/rental_repository.dart - RentalRepository
+
+Service Layer (서비스 레이어)
+----------------------------
+- lib/services/login_service.dart - LoginService
+- lib/services/car_service.dart - CarService
+
+Calculator (Decorator Pattern)
+------------------------------
+- lib/services/price_calculator.dart - PriceCalculator 인터페이스
+- lib/services/base_price_calculator.dart - BasePriceCalculator
+- lib/services/price_decorator.dart - PriceDecorator 추상 클래스
+- lib/services/mileage_fee_decorator.dart - MileageFeeDecorator
+
+Payment (Strategy Pattern + Factory Pattern)
+--------------------------------------------
+- lib/services/payment_strategy.dart - PayStrategy 인터페이스
+- lib/services/credit_card_payment.dart - CreditCardPayment
+- lib/services/kakao_pay.dart - KakaoPay
+- lib/services/payment.dart - Payment 클래스
+- lib/services/payment_strategy_factory.dart - PayStrategyFactory
+
+========================================
+적용된 디자인 패턴
+========================================
+
+1. Singleton Pattern - DatabaseManager
+2. DAO Pattern - UserDAO, CarDAO
+3. Repository Pattern - 각 Repository 클래스들
+4. Decorator Pattern - PriceCalculator 계층
+5. Strategy Pattern - Payment 전략들
+6. Factory Pattern - PayStrategyFactory
+
+========================================
+레이어 아키텍처 설명
+========================================
+
+Presentation Layer (프레젠테이션 레이어)
+----------------------------------------
+- lib/screens/ - UI 화면들 (Flutter Widgets)
+  - splash_screen.dart
+  - welcome_screen.dart
+  - login_screen.dart
+  - signup_screen.dart
+  - home_screen.dart
+
+Service Layer (서비스 레이어)
+----------------------------
+- lib/services/ - 비즈니스 로직 처리
+  - LoginService: 로그인, 로그아웃, 면허증 관리
+  - CarService: 차량 검색, 대여, 반납, 가격 계산
+  - Payment: 결제 처리 및 환불
+  - PriceCalculator 계층: 가격 계산 로직
+
+Repository Layer (저장소 레이어)
+-------------------------------
+- lib/repositories/ - 데이터 접근 추상화
+  - UserRepository: 사용자 데이터 관리
+  - CarRepository: 차량 데이터 관리
+  - RentalRepository: 대여 데이터 관리
+
+DAO Layer (데이터 접근 객체)
+--------------------------
+- lib/data/ - 데이터베이스 직접 접근
+  - DatabaseManager: SQLite 연결 및 테이블 생성
+  - UserDAO: users 테이블 CRUD
+  - CarDAO: cars 테이블 CRUD 및 검색
+
+Database Layer (데이터베이스 레이어)
+-----------------------------------
+- SQLite (sqflite 패키지 사용)
+  - users 테이블
+  - cars 테이블
+  - rentals 테이블
+
+========================================
+클래스 간 관계
+========================================
+
+Main
+ └─> CarRentalApp (MaterialApp)
+      └─> SplashScreen
+           └─> WelcomeScreen
+                ├─> LoginScreen (LoginService 사용)
+                ├─> SignUpScreen (LoginService 사용)
+                └─> HomeScreen (CarService 사용)
+
+LoginService
+ └─> UserRepository
+      └─> UserDAO
+           └─> DatabaseManager
+
+CarService
+ ├─> CarRepository
+ │    └─> CarDAO
+ │         └─> DatabaseManager
+ ├─> RentalRepository
+ │    └─> DatabaseManager
+ ├─> Payment
+ │    └─> PayStrategy (Strategy Pattern)
+ │         ├─> CreditCardPayment
+ │         └─> KakaoPay
+ └─> PriceCalculator (Decorator Pattern)
+      ├─> BasePriceCalculator
+      └─> MileageFeeDecorator
+
+========================================
+데이터베이스 테이블 구조
+========================================
+
+users 테이블
+------------
+- id: TEXT (PRIMARY KEY)
+- password: TEXT
+- name: TEXT
+- email: TEXT
+- phone: TEXT
+- createdAt: TEXT (ISO8601 날짜)
+
+cars 테이블
+-----------
+- id: INTEGER (PRIMARY KEY, AUTOINCREMENT)
+- model: TEXT
+- plateNo: TEXT (UNIQUE)
+- parkingId: INTEGER
+- pricePerHour: REAL
+- isRented: INTEGER (0 또는 1)
+
+rentals 테이블
+--------------
+- rentalId: TEXT (PRIMARY KEY)
+- userId: TEXT (FOREIGN KEY -> users.id)
+- carId: INTEGER (FOREIGN KEY -> cars.id)
+- startTime: TEXT (ISO8601 날짜)
+- endTime: TEXT (ISO8601 날짜)
+- distance: INTEGER
+
+========================================
+사용 예시
+========================================
+
+1. 로그인
+---------
+LoginService loginService = LoginService();
+User? user = await loginService.login('userId', 'password');
+
+2. 차량 검색
+-----------
+CarService carService = CarService();
+SearchCondition condition = SearchCondition(
+  model: 'BMW',
+  parkingId: 1,
+  minTime: DateTime.now(),
+  maxPrice: 20000.0,
+);
+List<Car> cars = await carService.getAvailableCar(condition);
+
+3. 차량 대여
+-----------
+// 가격 계산기 생성 (Decorator Pattern)
+PriceCalculator calculator = BasePriceCalculator(
+  basePrice: 15000.0,
+  hours: 24,
+);
+calculator = MileageFeeDecorator(
+  calculator,
+  mileage: 100,
+  pricePerKm: 100,
+);
+
+// 결제 전략 설정 (Strategy Pattern)
+Payment payment = Payment();
+payment.setPayStrategy(
+  PayStrategyFactory.createPay('credit_card', cardNumber: '1234-5678-9012-3456')
+);
+
+// 차량 대여
+bool success = await carService.rent(
+  user,
+  car,
+  calculator: calculator,
+);
+
+4. 차량 반납
+-----------
+Car? returnedCar = await carService.returnCar(rental);
+
+========================================
+다음 단계
+========================================
+
+1. 의존성 설치
+   flutter pub get
+
+2. 기존 화면들을 새 아키텍처와 연동
+   - LoginScreen에서 LoginService 사용
+   - SignUpScreen에서 UserRepository 사용
+   - HomeScreen에서 CarService 사용
+
+3. 추가 기능 구현
+   - 차량 검색 화면
+   - 차량 상세 화면
+   - 대여 내역 화면
+   - 결제 화면
+
+========================================
