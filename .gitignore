@@ -1,3 +1,4 @@
+# Flutter/Dart related
 # Miscellaneous
 *.class
 *.log
@@ -58,3 +59,27 @@ car_rental.db
 *.g.dart
 *.freezed.dart
 *.gr.dart
+
+# Java/Maven related
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+### Eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+!**/src/main/**/build/
+!**/src/test/**/build/
