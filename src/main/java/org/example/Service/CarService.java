@@ -47,18 +47,22 @@ public class CarService {
         List<Car> allCars = carDAO.getAllCars();
         return allCars;
     }
-    public void printCarList(List<Car> carList){
+    public void printCarList(List<Car> carList) {
         System.out.println("---- [ 전체 차량 목록 ] ----");
-        for(Car car : carList) {
+
+        for (int i = 0; i < carList.size(); i++) {
+            Car car = carList.get(i);
             String status = car.isAvailable() ? "대여 가능" : "대여 중";
-            System.out.println(
-                    "ID: " + car.getCarID()
-                            + " | 모델: " + car.getModelName()
-                            + " | 상태: " + status
+            System.out.printf("[%d] 모델: %s | 상태: %s\n",
+                    i + 1,
+                    car.getModelName(),
+                    status
             );
-            System.out.println("--------------------------");
         }
+
+        System.out.println("--------------------------");
     }
+
     public void lentCar(Car car, int rentalHours) {
         User sessionUser = SessionManager.INSTANCE.getUser();
 

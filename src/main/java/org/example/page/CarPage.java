@@ -34,20 +34,51 @@ public class CarPage implements Page{
             }
         }
     }
-    private void getCarList(){
+
+    // 차량 목록 조회
+    private void getCarList() {
         SearchCondition condition = getSearchCondition();
         List<Car> carList = carService.getConditionCar(condition);
-        if(carList.isEmpty()){
-            System.out.println("검색조건에 맞는 차량이 없다");
+
+        // 조건 맞는 차량 없음
+        if (carList.isEmpty()) {
+            System.out.println("⚠️ 조건에 맞는 대여 가능 차량이 없습니다.");
             return;
         }
-        carService.printCarList(carList);
-        String carNum = InputUtil.getLine("원하는 차량 순번 선택");
 
-        lentCar(carList.get(Integer.parseInt(carNum)-1));
+        // 번호 달린 리스트 출력 (수정된 printCarList 사용)
+        carService.printCarList(carList);
+
+        // 차량 선택
+        while (true) {
+            String input = InputUtil.getLine("원하는 차량 번호 입력 (0: 뒤로가기) : ");
+
+            // 뒤로가기
+            if (input.equals("0")) return;
+
+            // 숫자인지 검증
+            if (!input.matches("\\d+")) {
+                System.out.println("⚠️ 숫자를 입력해주세요.");
+                continue;
+            }
+
+            int num = Integer.parseInt(input);
+
+            // 번호 범위 검증
+            if (num < 1 || num > carList.size()) {
+                System.out.println("⚠️ 목록에 있는 번호를 입력해주세요.");
+                continue;
+            }
+
+            // 정상 선택
+            Car selected = carList.get(num - 1);
+            lentCar(selected);
+            break;
+        }
     }
+
     private SearchCondition getSearchCondition(){
-        System.out.println("옵션을 선택하시오");
+        System.out.println("[옵션을 선택하세요]");
         String model = null;
         Boolean isRented = false;
         Double minPrice = 0.0;
@@ -57,10 +88,10 @@ public class CarPage implements Page{
         while(run){
             int option=InputUtil.getInt("모델명","최소가격","최대가격","주차장위치","검색완료");
             switch (option){
-                case 1-> model = InputUtil.getLine("모델명을 입력하시오");
-                case 2-> minPrice = Double.parseDouble(InputUtil.getLine("최소가격을 입력하시오"));
-                case 3-> maxPrice = Double.parseDouble(InputUtil.getLine("최대가격을 입력하시오"));
-                case 4-> parkingId = Integer.parseInt(InputUtil.getLine("주차장 아이디(숫자)를 입력하시오"));
+                case 1-> model = InputUtil.getLine("[모델명을 입력하세요]");
+                case 2-> minPrice = Double.parseDouble(InputUtil.getLine("최소가격을 입력하세요 :"));
+                case 3-> maxPrice = Double.parseDouble(InputUtil.getLine("최대가격을 입력하세요 :"));
+                case 4-> parkingId = Integer.parseInt(InputUtil.getLine("주차장 아이디(숫자)를 입력하세요 :"));
                 case 5-> run =false;
                 case 0 -> run=false;
                 default-> run=false;
@@ -79,7 +110,7 @@ public class CarPage implements Page{
             loginService.checkLogIn();
             loginService.checkLicense();
             carService.checkHasNoCar();
-            int hour = Integer.parseInt(InputUtil.getLine("대여 시간을 입력하시오"));
+            int hour = Integer.parseInt(InputUtil.getLine("대여 시간을 입력하세요 :"));
             carService.lentCar(car,hour);
         }catch (ExitPageException e) {
             return;
@@ -90,7 +121,7 @@ public class CarPage implements Page{
             loginService.checkLogIn();
             loginService.checkLicense();
             carService.checkHasCar();
-            System.out.print("결제 수단을 고르시오");
+            System.out.print("결제 수단을 고르세요");
             int payment = InputUtil.getInt("KAKAO","CARD");
             String method = null;
             if(payment==1){
